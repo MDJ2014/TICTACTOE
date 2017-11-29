@@ -1,0 +1,172 @@
+$(document).ready(function() {
+
+$('#board').hide();
+
+$('#start-btn').click(function() {
+$('#start').hide();
+$('#board').show();
+
+});
+
+
+});
+
+
+
+(function() {
+const game = new Game();
+
+  function Game() {
+          this.winPositions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+          ];
+
+          this.ai = false;
+          this.player = 1;
+         // this.board = [];
+          this.board = [3,2,3,2,4,2,3,2,3];
+          this.board.length=9;
+          //this.scores = [];
+
+        }
+
+        Game.prototype.boxHover = function(box) {
+                let isFilled;
+                // if the box has any of the css classes it is occupied -> dont do anything
+                if (
+                  box.hasClass("box-filled-1") == true ||
+                  box.hasClass("box-filled-2") == true
+                ) {
+                  isFilled = true;
+                }
+                // if its not filled show the hover for the correct player
+                if (!isFilled) {
+                  box.toggleClass("box-choose-" + this.player);
+                }
+              };
+
+Game.prototype.checkWin = function(board, player){
+
+
+   var count=0;
+
+   		for(let i=0;i<game.winPositions.length;i++){
+   		var wPos = game.winPositions[i];
+
+   				for(let j=0; j<wPos.length;j++){
+   				var jPos=wPos[j];
+///////////////////////////////////////////player has to be x or o not 1 and 2
+   	if(board[wPos[j]]===player){
+   		count ++;
+   	}
+   		if(count===3){
+   			console.log("WINNER");
+   			return true;
+   		}
+   				}//end inner loop of wPos
+
+   		count=0;
+
+   		}//end outerloop
+   		console.log("NO WINNER YET");
+   return false;
+
+
+}//end checkWin
+Game.prototype.makePlay = function(box,player){
+
+//TODO   fill box on the UI  ai function
+/////////////////////////////////put player x or o into the board arrray
+//check for win
+//if win end game displays
+//if not win continue game
+game.board[box]=player;
+
+if(
+game.checkWin(game.board,player)){
+	
+	alert("WINNER");
+	
+	}
+
+
+
+}
+
+
+
+Game.prototype.changePlayer = function() {
+        if (this.player == 1) {
+        
+          this.player = 2;
+          $("#player2").addClass("active");
+          $("#player1").removeClass("active");
+
+        } else {
+      
+          this.player = 1;
+          $("#player1").addClass("active");
+          $("#player2").removeClass("active");
+
+        }
+      };
+
+
+//set the hover listener
+const $box = $(".box");
+
+$box.hover(function(){
+ game.boxHover($(this));
+});
+
+////////////////////////////////set the box click function
+$box.click(function(){
+
+      let isFilled;
+      let boxClicked = $(this);
+
+      // check to see if box is occupied
+      if (
+        boxClicked.hasClass("box-filled-1") == true ||
+        boxClicked.hasClass("box-filled-2") == true
+      ) {
+        isFilled = true;
+        return;
+      }
+
+if(game.player ===1){
+      if (!isFilled) {
+          //let status = game.boxFill($box,$(this));
+          $(this).removeClass('box-choose-1');
+          $(this).addClass('box-filled-1');
+          game.makePlay($(this).attr('id'),"O");///changeing 1 to O
+}
+}else if(game.player===2){
+  if (!isFilled) {
+      $(this).removeClass('box-choose-2');
+      $(this).addClass('box-filled-2');
+        game.makePlay($(this).attr('id'),"X");//change 2 to X
+}
+
+}
+game.changePlayer();
+
+});
+
+
+
+
+
+
+
+
+
+
+})();///end
